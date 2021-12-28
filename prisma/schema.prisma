@@ -9,3 +9,100 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+model User {
+  ///@Validator.IsUUID('4')
+  ///@HideField({ match: '{UserUncheckedCreateInput,UserUncheckedUpdateInput}' })
+  id String @id @default(uuid()) @db.Uuid
+
+  ///@Validator.IsNotEmpty()
+  ///@Validator.IsString()
+  ///@Validator.MinLength(3)  
+  name String 
+
+  ///@Validator.IsEmail()
+  ///@Validator.IsNotEmpty()
+  email String @unique()
+
+  ///@Validator.IsNotEmpty()
+  ///@Validator.IsString()
+  ///@Validator.MinLength(6)
+  password String 
+
+  ///@HideField({ input: true, output: false })
+  created_at DateTime @default(now())
+
+  ///@HideField({ input: true, output: false })
+  updated_at DateTime @default(now())
+
+  ///@HideField({ input: true, output: false })
+  deleted_at DateTime? 
+
+  ///@HideField({ input: false, output: false })
+  categories Category[]
+}
+
+model Category {
+  ///@HideField({ match: 'CategoryCreateInput, CategoryUpdateInput' })
+  ///@Validator.IsUUID('4')
+  id String @default(uuid()) @db.Uuid
+
+  ///@HideField({ match: 'CategoryCreateInput, CategoryUpdateInput' })
+  ///@Validator.IsUUID('4')
+  ///@Validator.IsNotEmpty()
+  idUser String @db.Uuid
+  
+  ///@Validator.IsString()
+  ///@Validator.IsNotEmpty()
+  ///@Validator.MinLength(3)
+  ///@Validator.MaxLength(20)
+  name String @db.VarChar(20)
+
+  ///@Validator.IsString()
+  ///@Validator.IsNotEmpty()
+  ///@Validator.Length(10)
+  ///@Validator.MaxLength(100)
+  description String @db.VarChar(100)
+
+  ///@Validator.IsInt()
+  ///@Validator.IsPositive()
+  icon BigInt
+
+  ///@HideField({ input: true, output: false })
+  user User @relation(fields: [idUser], references: [id], onUpdate: Cascade, onDelete: Cascade)
+
+  ///@HideField({ input: false, output: false })
+  passwords Password[]
+
+  @@id([id, idUser])
+}
+
+model Password {
+  ///@HideField({ match: 'PasswordCreateInput, PasswordUpdateInput' })
+  ///@Validator.IsUUID('4')
+  id String @default(uuid()) @db.Uuid
+
+  ///@HideField({ match: 'PasswordCreateInput, PasswordUpdateInput' })
+  ///@Validator.IsUUID('4')
+  ///@Validator.IsNotEmpty()
+  idCategory String @db.Uuid
+
+  ///@HideField({ match: 'PasswordCreateInput, PasswordUpdateInput' })
+  ///@Validator.IsUUID('4')
+  ///@Validator.IsNotEmpty()
+  idUser String @db.Uuid
+
+  ///@Validator.IsString()
+  ///@Validator.IsNotEmpty()
+  ///@Validator.MaxLength(40)
+  description String 
+
+  ///@Validator.IsString()
+  ///@Validator.IsNotEmpty()
+  value String
+  
+  ///@HideField({ input: true, output: false })
+  category Category @relation(fields: [idCategory, idUser], references: [id, idUser], onUpdate: Cascade, onDelete: Cascade)
+
+  @@id([id, idUser, idCategory])
+}
