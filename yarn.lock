@@ -2,6 +2,18 @@
 # yarn lockfile v1
 
 
+"@angular-devkit/core@12.2.14", "@angular-devkit/core@^12.2.12":
+  version "12.2.14"
+  resolved "https://registry.yarnpkg.com/@angular-devkit/core/-/core-12.2.14.tgz#95f274996da5b7cc4f7b0ae4fd09db19d6442043"
+  integrity sha512-C2pVuvZGULzaIu44ixQ4prJIBn/QLY/bjlyProXM8NOw5/92iNuGus11qZ4+xeiQgzfZxXN1eYyL2Mpo7PG5ug==
+  dependencies:
+    ajv "8.6.2"
+    ajv-formats "2.1.0"
+    fast-json-stable-stringify "2.1.0"
+    magic-string "0.25.7"
+    rxjs "6.6.7"
+    source-map "0.7.3"
+
 "@angular-devkit/core@13.0.2":
   version "13.0.2"
   resolved "https://registry.yarnpkg.com/@angular-devkit/core/-/core-13.0.2.tgz#1ef92388464ca86d22b21c6ebcb9fc3b6a16c374"
@@ -37,6 +49,15 @@
     inquirer "8.2.0"
     minimist "1.2.5"
     symbol-observable "4.0.0"
+
+"@angular-devkit/schematics@12.2.14", "@angular-devkit/schematics@^12.2.12":
+  version "12.2.14"
+  resolved "https://registry.yarnpkg.com/@angular-devkit/schematics/-/schematics-12.2.14.tgz#3d6bdedd56c4e97460f1f109aa09516ba8f14d42"
+  integrity sha512-QS2IdV3c51CFpHlj1x7xEOQuoYJS2W1bDYLbZUcgfp7u/6M8pA1gz96F0zy4dO5775+MSakpl9314H9956irKw==
+  dependencies:
+    "@angular-devkit/core" "12.2.14"
+    ora "5.4.1"
+    rxjs "6.6.7"
 
 "@angular-devkit/schematics@13.0.2":
   version "13.0.2"
@@ -713,6 +734,15 @@
   resolved "https://registry.yarnpkg.com/@prisma/engines/-/engines-3.7.0-31.8746e055198f517658c08a0c426c7eec87f5a85f.tgz#12f28d5b78519fbd84c89a5bdff457ff5095e7a2"
   integrity sha512-W549ub5NlgexNhR8EFstA/UwAWq3Zq0w9aNkraqsozVCt2CsX+lK4TK7IW5OZVSnxHwRjrgEAt3r9yPy8nZQRg==
 
+"@schematics/angular@~12.2.12":
+  version "12.2.14"
+  resolved "https://registry.yarnpkg.com/@schematics/angular/-/angular-12.2.14.tgz#29f81f975bfdff40f872adef017f6b23e95b50b7"
+  integrity sha512-TpcVNTKoo44eat4lpIfl7jyd/eBuvVgI8bBIGh621QWYfkfRZFuXF6QSB4hh44aoX8lqxxRNlmIsp/P4goiMFg==
+  dependencies:
+    "@angular-devkit/core" "12.2.14"
+    "@angular-devkit/schematics" "12.2.14"
+    jsonc-parser "3.0.0"
+
 "@sinonjs/commons@^1.7.0":
   version "1.8.3"
   resolved "https://registry.yarnpkg.com/@sinonjs/commons/-/commons-1.8.3.tgz#3802ddd21a50a949b6721ddd72da36e67e7f1b2d"
@@ -1228,6 +1258,13 @@ agent-base@6:
   dependencies:
     debug "4"
 
+ajv-formats@2.1.0:
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/ajv-formats/-/ajv-formats-2.1.0.tgz#96eaf83e38d32108b66d82a9cb0cfa24886cdfeb"
+  integrity sha512-USH2jBb+C/hIpwD2iRjp0pe0k+MvzG0mlSn/FIdCgQhUb9ALPRjt2KIQdfZDS9r0ZIeUAg7gOu9KL0PFqGqr5Q==
+  dependencies:
+    ajv "^8.0.0"
+
 ajv-formats@2.1.1:
   version "2.1.1"
   resolved "https://registry.yarnpkg.com/ajv-formats/-/ajv-formats-2.1.1.tgz#6e669400659eb74973bbf2e33327180a0996b520"
@@ -1239,6 +1276,16 @@ ajv-keywords@^3.4.1, ajv-keywords@^3.5.2:
   version "3.5.2"
   resolved "https://registry.yarnpkg.com/ajv-keywords/-/ajv-keywords-3.5.2.tgz#31f29da5ab6e00d1c2d329acf7b5929614d5014d"
   integrity sha512-5p6WTN0DdTGVQk6VjcEju19IgaHudalcfabD7yhDGeA6bcQnmL+CpveLJq/3hvfwd1aof6L386Ougkx6RfyMIQ==
+
+ajv@8.6.2:
+  version "8.6.2"
+  resolved "https://registry.yarnpkg.com/ajv/-/ajv-8.6.2.tgz#2fb45e0e5fcbc0813326c1c3da535d1881bb0571"
+  integrity sha512-9807RlWAgT564wT+DjeyU5OFMPjmzxVobvDFmNAhY+5zD6A2ly3jDp6sgnfyDtlIQ+7H97oc/DGCzzfu9rjw9w==
+  dependencies:
+    fast-deep-equal "^3.1.1"
+    json-schema-traverse "^1.0.0"
+    require-from-string "^2.0.2"
+    uri-js "^4.2.2"
 
 ajv@8.6.3:
   version "8.6.3"
@@ -3779,6 +3826,16 @@ neo-async@^2.6.2:
   resolved "https://registry.yarnpkg.com/neo-async/-/neo-async-2.6.2.tgz#b4aafb93e3aeb2d8174ca53cf163ab7d7308305f"
   integrity sha512-Yd3UES5mWCSqR+qNT93S3UoYUkqAZ9lLg8a7g9rimsWmYGK8cVToA4/sF3RrshdyV3sAGMXVUmpMYOw+dLpOuw==
 
+nestjs-prisma@^0.14.3:
+  version "0.14.3"
+  resolved "https://registry.yarnpkg.com/nestjs-prisma/-/nestjs-prisma-0.14.3.tgz#c32559fb2dbaa9d06b5b247de0030a6fc625c8c5"
+  integrity sha512-MJjEa0qWfgsnuWd4AWurGTDGQYJH6VtrDTQrYcz5OPV+N8hC3/jIZwSWzLcj4kWQyl5gBv+daR2oDYHPPFzzAQ==
+  dependencies:
+    "@angular-devkit/core" "^12.2.12"
+    "@angular-devkit/schematics" "^12.2.12"
+    "@schematics/angular" "~12.2.12"
+    typescript "~4.3.5"
+
 node-addon-api@^3.1.0:
   version "3.2.1"
   resolved "https://registry.yarnpkg.com/node-addon-api/-/node-addon-api-3.2.1.tgz#81325e0a2117789c0128dab65e7e38f07ceba161"
@@ -4888,7 +4945,7 @@ typedarray@^0.0.6:
   resolved "https://registry.yarnpkg.com/typedarray/-/typedarray-0.0.6.tgz#867ac74e3864187b1d3d47d996a78ec5c8830777"
   integrity sha1-hnrHTjhkGHsdPUfZlqeOxciDB3c=
 
-typescript@4.3.5:
+typescript@4.3.5, typescript@~4.3.5:
   version "4.3.5"
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-4.3.5.tgz#4d1c37cc16e893973c45a06886b7113234f119f4"
   integrity sha512-DqQgihaQ9cUrskJo9kIyW/+g0Vxsk8cDtZ52a3NGh0YNTfpUSArXSohyUGnvbPazEPLu398C0UxmKSOrPumUzA==
