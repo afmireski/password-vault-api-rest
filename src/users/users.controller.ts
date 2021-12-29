@@ -3,6 +3,8 @@ import {
   Controller,
   Delete,
   Get,
+  HttpCode,
+  HttpStatus,
   Param,
   Patch,
   Post,
@@ -12,6 +14,7 @@ import {
 import { User } from '@prisma/client';
 import { IsUuid } from 'src/validators/isUuid-validator';
 import { CreateUserDto } from './dtos/input/create-user.dto';
+import { UpdateUserPasswordDto } from './dtos/input/update-user-password.dto';
 import { UpdateUserDto } from './dtos/input/update-user.dto';
 import { UsersService } from './users.service';
 
@@ -47,7 +50,18 @@ export class UsersController {
 
   @Delete(':id')
   @UsePipes(new ValidationPipe())
+  @HttpCode(HttpStatus.NO_CONTENT)
   async delete(@Param() params: IsUuid) {
     return this.usersService.delete(params.id);
+  }
+
+  @Post(':id/updatePassword')
+  @UsePipes(new ValidationPipe())
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async updatePassword(
+    @Param() param: IsUuid,
+    @Body() body: UpdateUserPasswordDto,
+  ) {
+    return this.usersService.updatePassword(param.id, body);
   }
 }

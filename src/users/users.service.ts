@@ -7,6 +7,7 @@ import { User, Prisma } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 import * as bcrypt from 'bcrypt';
 import { userErrors } from 'src/error-codes/100-user-errors';
+import { UpdateUserPasswordDto } from './dtos/input/update-user-password.dto';
 
 @Injectable()
 export class UsersService {
@@ -111,6 +112,50 @@ export class UsersService {
         return this.prisma.user.delete({
           where: { id: id },
           select: null,
+        });
+      })
+      .then(() => undefined)
+      .catch((error) => {
+        throw error;
+      });
+  }
+
+  async updatePassword(id: string, input: UpdateUserPasswordDto) {
+    return Promise.resolve(this.findUnique({ id: id }))
+      .then((user) => {
+        if (!user) {
+          throw new BadRequestException({
+            code: 101,
+            message: userErrors[101],
+          });
+        }
+        if (input.current_password === input.new_password) {
+          throw new BadRequestException({
+            code: 102,
+            message: userErrors[102],
+          });
+        } else if (input.new_password !== input.confirm_new_password) {
+          throw new BadRequestException({
+            code: 103,
+            message: userErrors[103],
+          });
+        } else if (!bcrypt.compareSync(input.current_password, user.password)) {
+          throw new BadRequestException({
+            code: 104,
+            message: userErrors[104],
+          });
+        }
+
+        return this.prisma.user.update({
+          where: {
+            id: id,
+          },
+          data: {
+            password: bcrypt.hashSync(
+              input.new_password,
+              bcrypt.genSaltSync(10),
+            ),
+          },
         });
       })
       .then(() => undefined);
