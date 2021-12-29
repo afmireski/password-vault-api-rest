@@ -33,10 +33,7 @@ model User {
   created_at DateTime @default(now())
 
   ///@HideField({ input: true, output: false })
-  updated_at DateTime @default(now())
-
-  ///@HideField({ input: true, output: false })
-  deleted_at DateTime? 
+  updated_at DateTime @default(now()) 
 
   ///@HideField({ input: false, output: false })
   categories Category[]
