@@ -8,6 +8,7 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import * as bcrypt from 'bcrypt';
 import { userErrors } from 'src/error-codes/100-user-errors';
 import { UpdateUserPasswordDto } from './dtos/input/update-user-password.dto';
+import { LoginDto } from './dtos/input/login.dto';
 
 @Injectable()
 export class UsersService {
@@ -159,5 +160,26 @@ export class UsersService {
         });
       })
       .then(() => undefined);
+  }
+
+  async login(input: LoginDto) {
+    return Promise.resolve(this.findUnique({ email: input.email })).then(
+      (user) => {
+        if (!user) {
+          throw new BadRequestException({
+            code: 106,
+            message: userErrors[106],
+          });
+        }
+        if (!bcrypt.compareSync(input.password, user.password)) {
+          throw new BadRequestException({
+            code: 105,
+            message: userErrors[105],
+          });
+        }
+
+        return user;
+      },
+    );
   }
 }
