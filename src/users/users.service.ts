@@ -2,7 +2,6 @@ import {
   BadRequestException,
   ConflictException,
   Injectable,
-  NotFoundException,
 } from '@nestjs/common';
 import { User, Prisma } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
@@ -97,5 +96,23 @@ export class UsersService {
       .catch((error) => {
         throw error;
       });
+  }
+
+  async delete(id: string) {
+    return Promise.resolve(this.findUnique({ id: id }))
+      .then((user) => {
+        if (!user) {
+          throw new BadRequestException({
+            code: 101,
+            message: userErrors[101],
+          });
+        }
+
+        return this.prisma.user.delete({
+          where: { id: id },
+          select: null,
+        });
+      })
+      .then(() => undefined);
   }
 }

@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   Patch,
@@ -42,5 +43,11 @@ export class UsersController {
       name: body.name,
       email: body.email,
     });
+  }
+
+  @Delete(':id')
+  @UsePipes(new ValidationPipe())
+  async delete(@Param() params: IsUuid) {
+    return this.usersService.delete(params.id);
   }
 }
