@@ -1,4 +1,9 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { User, Prisma } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 import * as bcrypt from 'bcrypt';
@@ -41,6 +46,54 @@ export class UsersService {
           },
         });
       })
+      .catch((error) => {
+        throw error;
+      });
+  }
+
+  async update(input: Prisma.UserUncheckedUpdateInput): Promise<User> {
+    return await Promise.resolve()
+      .then(async () => {
+        const user = await this.findUnique({ id: input.id as string });
+
+        if (!user) {
+          throw new BadRequestException({
+            code: 101,
+            message: userErrors[101],
+          });
+        }
+      })
+      .then(async () => {
+        if (input.email) {
+          const user = await this.findUnique({ email: input.email as string });
+
+          if (user) {
+            throw new BadRequestException({
+              code: 100,
+              message: userErrors[100],
+            });
+          }
+        }
+      })
+      .then(() =>
+        this.prisma.user.update({
+          where: {
+            id: input.id as string,
+          },
+          data: {
+            name: input.name,
+            email: input.email,
+            updated_at: new Date(),
+          },
+        }),
+      )
+      .then((updatedUser) =>
+        this.prisma.user.findUnique({
+          where: {
+            id: updatedUser.id,
+          },
+        }),
+      )
       .catch((error) => {
         throw error;
       });

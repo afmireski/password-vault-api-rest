@@ -3,12 +3,15 @@ import {
   Controller,
   Get,
   Param,
+  Patch,
   Post,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
 import { User } from '@prisma/client';
+import { IsUuid } from 'src/validators/isUuid-validator';
 import { CreateUserDto } from './dtos/input/create-user.dto';
+import { UpdateUserDto } from './dtos/input/update-user.dto';
 import { UsersService } from './users.service';
 
 @Controller('users')
@@ -29,5 +32,15 @@ export class UsersController {
   @UsePipes(new ValidationPipe())
   async create(@Body() body: CreateUserDto) {
     return this.usersService.create(body);
+  }
+
+  @Patch(':id')
+  @UsePipes(new ValidationPipe())
+  async update(@Param() params: IsUuid, @Body() body: UpdateUserDto) {
+    return this.usersService.update({
+      id: params.id,
+      name: body.name,
+      email: body.email,
+    });
   }
 }
