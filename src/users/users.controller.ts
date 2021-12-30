@@ -65,11 +65,4 @@ export class UsersController {
   ) {
     return this.usersService.updatePassword(param.id, body);
   }
-
-  // @Post('/login')
-  // @UsePipes(new ValidationPipe())
-  // @HttpCode(HttpStatus.OK)
-  // async login(@Body() body: LoginDto) {
-  //   return this.usersService.login(body);
-  // }
 }
