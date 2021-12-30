@@ -17,7 +17,6 @@ import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { IsEmailValidator } from 'src/validators/isEmail-validator';
 import { IsUuid } from 'src/validators/isUuid-validator';
 import { CreateUserDto } from './dtos/input/create-user.dto';
-import { LoginDto } from './dtos/input/login.dto';
 import { UpdateUserPasswordDto } from './dtos/input/update-user-password.dto';
 import { UpdateUserDto } from './dtos/input/update-user.dto';
 import { UsersService } from './users.service';

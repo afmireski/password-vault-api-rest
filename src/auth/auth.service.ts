@@ -17,7 +17,7 @@ export class AuthService {
   async validateUser(email: string, password: string): Promise<User> {
     return Promise.resolve(this.usersService.findUnique({ email: email }))
       .then((user) => {
-        if (!user && !bcrypt.compareSync(password, user.password)) {
+        if (!user || !bcrypt.compareSync(password, user.password)) {
           throw new UnauthorizedException({
             code: 107,
             message: userErrors[107],
