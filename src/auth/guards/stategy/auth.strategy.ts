@@ -10,8 +10,10 @@ export class AuthStrategy extends PassportStrategy(Strategy) {
     super();
   }
 
-  async validate(email: string, password: string): Promise<User> {
-    return Promise.resolve(this.authService.validateUser(email, password))
+  async validate(body: any): Promise<User> {
+    return Promise.resolve(
+      this.authService.validateUser(body.email, body.password),
+    )
       .then((user) => {
         if (!user) {
           throw new UnauthorizedException();
