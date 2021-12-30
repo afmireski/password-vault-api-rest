@@ -1,9 +1,8 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
 import { UsersModule } from 'src/users/users.module';
 import { PassportModule } from '@nestjs/passport';
-import { AuthStrategy } from './guards/stategy/auth.strategy';
 import { JwtModule } from '@nestjs/jwt';
 import { jwtConstants } from './guards/constants';
 import { UsersService } from 'src/users/users.service';
@@ -12,20 +11,14 @@ import { JwtStrategy } from './guards/stategy/jwt.strategy';
 
 @Module({
   imports: [
-    UsersModule,
+    forwardRef(() => UsersModule),
     PassportModule,
     JwtModule.register({
       secret: jwtConstants.secret,
-      signOptions: { expiresIn: '2h' },
+      signOptions: { expiresIn: '60s' },
     }),
   ],
   controllers: [AuthController],
-  providers: [
-    UsersService,
-    PrismaService,
-    AuthService,
-    AuthStrategy,
-    JwtStrategy,
-  ],
+  providers: [UsersService, PrismaService, AuthService, JwtStrategy],
 })
 export class AuthModule {}

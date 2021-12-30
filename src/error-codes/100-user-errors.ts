@@ -6,6 +6,7 @@ const userErrors = {
   104: "The informed 'current_password' value isn't equals as the 'current user password' value",
   105: "The informed password isn't equals as this user password",
   106: "A user with this e-mail doesn' t exists",
+  107: "This user credentials aren't valid",
 };
 
 export { userErrors };

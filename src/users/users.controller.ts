@@ -8,10 +8,13 @@ import {
   Param,
   Patch,
   Post,
+  UseGuards,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
 import { User } from '@prisma/client';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { IsEmailValidator } from 'src/validators/isEmail-validator';
 import { IsUuid } from 'src/validators/isUuid-validator';
 import { CreateUserDto } from './dtos/input/create-user.dto';
 import { LoginDto } from './dtos/input/login.dto';
@@ -24,13 +27,17 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Get(':id/id')
-  async findUserById(@Param('id') id: string): Promise<User> {
-    return this.usersService.findUnique({ id: id });
+  @UseGuards(JwtAuthGuard)
+  @UsePipes(new ValidationPipe())
+  async findUserById(@Param() params: IsUuid): Promise<User> {
+    return this.usersService.findUnique({ id: params.id });
   }
 
   @Get(':email/email')
-  async findUserByEmail(@Param('email') email: string): Promise<User> {
-    return this.usersService.findUnique({ email: email });
+  @UseGuards(JwtAuthGuard)
+  @UsePipes(new ValidationPipe())
+  async findUserByEmail(@Param() params: IsEmailValidator): Promise<User> {
+    return this.usersService.findUnique({ email: params.email });
   }
 
   @Post()
@@ -40,6 +47,7 @@ export class UsersController {
   }
 
   @Patch(':id')
+  @UseGuards(JwtAuthGuard)
   @UsePipes(new ValidationPipe())
   async update(@Param() params: IsUuid, @Body() body: UpdateUserDto) {
     return this.usersService.update({
@@ -51,6 +59,7 @@ export class UsersController {
 
   @Delete(':id')
   @UsePipes(new ValidationPipe())
+  @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
   async delete(@Param() params: IsUuid) {
     return this.usersService.delete(params.id);
@@ -58,6 +67,7 @@ export class UsersController {
 
   @Post(':id/updatePassword')
   @UsePipes(new ValidationPipe())
+  @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
   async updatePassword(
     @Param() param: IsUuid,

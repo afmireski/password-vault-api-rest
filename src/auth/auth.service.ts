@@ -5,6 +5,7 @@ import { UsersService } from 'src/users/users.service';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { LoginDto } from 'src/users/dtos/input/login.dto';
+import { userErrors } from 'src/error-codes/100-user-errors';
 
 @Injectable()
 export class AuthService {
@@ -17,7 +18,10 @@ export class AuthService {
     return Promise.resolve(this.usersService.findUnique({ email: email }))
       .then((user) => {
         if (!user && !bcrypt.compareSync(password, user.password)) {
-          return null;
+          throw new UnauthorizedException({
+            code: 107,
+            message: userErrors[107],
+          });
         }
         return user;
       })
