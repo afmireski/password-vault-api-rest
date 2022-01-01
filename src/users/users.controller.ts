@@ -13,6 +13,7 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { User } from '@prisma/client';
+import { IsUserGuard } from 'src/auth/guards/is-user.guard';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { IsEmailValidator } from 'src/validators/isEmail-validator';
 import { IsUuid } from 'src/validators/isUuid-validator';
@@ -46,7 +47,7 @@ export class UsersController {
   }
 
   @Patch(':id')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, IsUserGuard)
   @UsePipes(new ValidationPipe())
   async update(@Param() params: IsUuid, @Body() body: UpdateUserDto) {
     return this.usersService.update({
@@ -58,7 +59,7 @@ export class UsersController {
 
   @Delete(':id')
   @UsePipes(new ValidationPipe())
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, IsUserGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
   async delete(@Param() params: IsUuid) {
     return this.usersService.delete(params.id);
@@ -66,7 +67,7 @@ export class UsersController {
 
   @Post(':id/updatePassword')
   @UsePipes(new ValidationPipe())
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, IsUserGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
   async updatePassword(
     @Param() param: IsUuid,
