@@ -161,25 +161,4 @@ export class UsersService {
       })
       .then(() => undefined);
   }
-
-  // async login(input: LoginDto) {
-  //   return Promise.resolve(this.findUnique({ email: input.email })).then(
-  //     (user) => {
-  //       if (!user) {
-  //         throw new BadRequestException({
-  //           code: 106,
-  //           message: userErrors[106],
-  //         });
-  //       }
-  //       if (!bcrypt.compareSync(input.password, user.password)) {
-  //         throw new BadRequestException({
-  //           code: 105,
-  //           message: userErrors[105],
-  //         });
-  //       }
-
-  //       return user;
-  //     },
-  //   );
-  // }
 }
