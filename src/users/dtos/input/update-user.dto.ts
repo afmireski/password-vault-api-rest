@@ -11,7 +11,7 @@ export class UpdateUserDto {
   @ApiProperty({
     description: 'The new name of user',
     nullable: true,
-    example: 'John Doe',
+    example: 'Updated User',
     minLength: 3,
     type: String,
   })
@@ -22,9 +22,9 @@ export class UpdateUserDto {
   name: string;
 
   @ApiProperty({
-    description: 'The email of new user',
+    description: 'The new email of user',
     nullable: true,
-    example: 'johndoe@email.com',
+    example: 'updateduser@email.com',
     type: String,
   })
   @IsEmail()
