@@ -12,6 +12,7 @@ import {
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 import { User } from '@prisma/client';
 import { IsUserGuard } from 'src/auth/guards/is-user.guard';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
@@ -22,6 +23,7 @@ import { UpdateUserPasswordDto } from './dtos/input/update-user-password.dto';
 import { UpdateUserDto } from './dtos/input/update-user.dto';
 import { UsersService } from './users.service';
 
+@ApiTags('Users')
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
