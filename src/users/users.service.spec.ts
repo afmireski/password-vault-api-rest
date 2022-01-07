@@ -5,6 +5,7 @@ import * as bcrypt from 'bcrypt';
 import { userErrors } from '../error-codes/100-user-errors';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateUserDto } from './dtos/input/create-user.dto';
+import { UpdateUserDto } from './dtos/input/update-user.dto';
 import { UsersService } from './users.service';
 
 describe('UsersService', () => {
@@ -130,6 +131,59 @@ describe('UsersService', () => {
       mock.user.findFirst.mockReturnValue(user);
 
       await service.create(createUserDto).catch((error) => {
+        expect(error).toBeInstanceOf(ConflictException);
+        expect(error.response).toMatchObject({
+          code: 108,
+          message: userErrors[108],
+        });
+      });
+    });
+  });
+
+  describe('update', () => {
+    const userId = '0adc9fe5-497e-4376-be4e-d7482b91bf03';
+    const updateUserDto: UpdateUserDto = {
+      name: 'Updated User',
+      email: 'updated_user@email.com',
+    };
+
+    const updatedUser: User = {
+      id: '159db799-3d36-4ccb-8dff-f49c78ce5f28',
+      email: 'updated_user@email.com',
+      name: 'Updated User',
+      password: user.password,
+      created_at: user.created_at,
+      updated_at: new Date(),
+    };
+
+    it('should return a updated user', async () => {
+      mock.user.findUnique.mockReturnValue(user);
+      mock.user.findFirst.mockReturnValue(null);
+      mock.user.update.mockReturnValue(updatedUser);
+      mock.user.findUnique.mockReturnValue(updatedUser);
+
+      const response = await service.update({ id: userId, ...updateUserDto });
+
+      expect(response).toMatchObject(updatedUser);
+    });
+
+    it("should return a error, because the user doesn't exists", async () => {
+      mock.user.findUnique.mockReturnValue(null);
+
+      await service.update({ id: userId, ...updateUserDto }).catch((error) => {
+        expect(error).toBeInstanceOf(NotFoundException);
+        expect(error.response).toMatchObject({
+          code: 101,
+          message: userErrors[101],
+        });
+      });
+    });
+
+    it('should return a error, because the email already is used', async () => {
+      mock.user.findUnique.mockReturnValue(user);
+      mock.user.findFirst.mockReturnValue(user);
+
+      await service.update({ id: userId, ...updateUserDto }).catch((error) => {
         expect(error).toBeInstanceOf(ConflictException);
         expect(error.response).toMatchObject({
           code: 108,
