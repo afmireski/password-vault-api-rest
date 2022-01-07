@@ -1,6 +1,10 @@
+import { NotFoundException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { User } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
+import { Console } from 'console';
+import { userErrors } from '../error-codes/100-user-errors';
+import { ErrorCodeDto } from '../error-codes/error-code.dto';
 import { PrismaService } from '../prisma/prisma.service';
 import { UsersService } from './users.service';
 
@@ -72,23 +76,35 @@ describe('UsersService', () => {
     });
 
     it("should return a error because doesn't exists a user with this id", async () => {
-      mock.user.findUnique.mockReturnValue(user);
+      mock.user.findUnique.mockReturnValue(null);
 
-      const response = await service.findUnique({
-        id: 'bb597c87-2cf6-47fd-9f1c-5e99a6bae93d',
-      });
-
-      expect(response).toMatchObject(user);
+      await service
+        .findUnique({
+          id: 'bb597c87-2cf6-47fd-9f1c-5e99a6bae93d',
+        })
+        .catch((error) => {
+          expect(error).toBeInstanceOf(NotFoundException);
+          expect(error.response).toMatchObject({
+            code: 101,
+            message: userErrors[101],
+          });
+        });
     });
 
     it("should return a error because doesn't exists a user with this email", async () => {
-      mock.user.findUnique.mockReturnValue(user);
+      mock.user.findUnique.mockReturnValue(null);
 
-      const response = await service.findUnique({
-        email: 'unknown@email.com',
-      });
-
-      expect(response).toMatchObject(user);
+      await service
+        .findUnique({
+          email: 'unknown@email.com',
+        })
+        .catch((error) => {
+          expect(error).toBeInstanceOf(NotFoundException);
+          expect(error.response).toMatchObject({
+            code: 101,
+            message: userErrors[101],
+          });
+        });
     });
   });
 });
