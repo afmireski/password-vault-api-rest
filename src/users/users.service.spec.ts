@@ -1,11 +1,10 @@
-import { NotFoundException } from '@nestjs/common';
+import { ConflictException, NotFoundException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { User } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
-import { Console } from 'console';
 import { userErrors } from '../error-codes/100-user-errors';
-import { ErrorCodeDto } from '../error-codes/error-code.dto';
 import { PrismaService } from '../prisma/prisma.service';
+import { CreateUserDto } from './dtos/input/create-user.dto';
 import { UsersService } from './users.service';
 
 describe('UsersService', () => {
@@ -14,6 +13,7 @@ describe('UsersService', () => {
   const mock = {
     user: {
       findUnique: jest.fn(),
+      findFirst: jest.fn(),
       create: jest.fn(),
       update: jest.fn(),
       delete: jest.fn(),
@@ -21,14 +21,14 @@ describe('UsersService', () => {
     },
   };
 
-  const user = {
+  const user: User = {
     id: '0adc9fe5-497e-4376-be4e-d7482b91bf03',
     email: 'user@email.com',
     name: 'User',
     password: bcrypt.hashSync('123456', bcrypt.genSaltSync(10)),
-    created_at: '2022-01-03T13:31:42.730Z',
-    updated_at: '2022-01-03T13:31:42.730Z',
-  } as unknown as User;
+    created_at: new Date(),
+    updated_at: new Date(),
+  };
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -42,6 +42,7 @@ describe('UsersService', () => {
     }).compile();
 
     mock.user.findUnique.mockReset;
+    mock.user.findFirst.mockReset;
     mock.user.create.mockReset;
     mock.user.delete.mockReset;
     mock.user.update.mockReset;
@@ -105,6 +106,36 @@ describe('UsersService', () => {
             message: userErrors[101],
           });
         });
+    });
+  });
+
+  describe('create', () => {
+    const createUserDto: CreateUserDto = {
+      email: 'user@email.com',
+      name: 'User',
+      password: '123456',
+    };
+
+    it('should return a new user', async () => {
+      mock.user.findFirst.mockReturnValue(null);
+      mock.user.create.mockReturnValue(user);
+      mock.user.findUnique.mockReturnValue(user);
+
+      const response = await service.create(createUserDto);
+
+      expect(response).toMatchObject(user);
+    });
+
+    it('should return a error, because the e-mail already is used', async () => {
+      mock.user.findFirst.mockReturnValue(user);
+
+      await service.create(createUserDto).catch((error) => {
+        expect(error).toBeInstanceOf(ConflictException);
+        expect(error.response).toMatchObject({
+          code: 108,
+          message: userErrors[108],
+        });
+      });
     });
   });
 });
