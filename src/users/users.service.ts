@@ -6,9 +6,9 @@ import {
 } from '@nestjs/common';
 import { Prisma, User } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
-import { userErrors } from 'src/error-codes/100-user-errors';
-import { ErrorCodeDto } from 'src/error-codes/error-code.dto';
-import { PrismaService } from 'src/prisma/prisma.service';
+import { userErrors } from '../error-codes/100-user-errors';
+import { ErrorCodeDto } from '../error-codes/error-code.dto';
+import { PrismaService } from '../prisma/prisma.service';
 import { UpdateUserPasswordDto } from './dtos/input/update-user-password.dto';
 
 @Injectable()
