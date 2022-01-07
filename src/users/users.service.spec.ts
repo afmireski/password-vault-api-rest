@@ -1,10 +1,15 @@
-import { ConflictException, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  ConflictException,
+  NotFoundException,
+} from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { User } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 import { userErrors } from '../error-codes/100-user-errors';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateUserDto } from './dtos/input/create-user.dto';
+import { UpdateUserPasswordDto } from './dtos/input/update-user-password.dto';
 import { UpdateUserDto } from './dtos/input/update-user.dto';
 import { UsersService } from './users.service';
 
@@ -215,6 +220,106 @@ describe('UsersService', () => {
           expect(error.response).toMatchObject({
             code: 101,
             message: userErrors[101],
+          });
+        });
+    });
+  });
+
+  describe('updatePassword', () => {
+    it('should return undefined, because has sucess', async () => {
+      mock.user.findUnique.mockReturnValue(user);
+      mock.user.update.mockReturnValue(undefined);
+
+      const input: UpdateUserPasswordDto = {
+        current_password: '123456',
+        new_password: '654321',
+        confirm_new_password: '654321',
+      };
+
+      const response = await service.updatePassword(
+        '0adc9fe5-497e-4376-be4e-d7482b91bf03',
+        input,
+      );
+
+      expect(response).toBeUndefined();
+    });
+
+    it("should return error, because the user doesn't exists", async () => {
+      mock.user.findUnique.mockReturnValue(null);
+
+      const input: UpdateUserPasswordDto = {
+        current_password: '123456',
+        new_password: '654321',
+        confirm_new_password: '654321',
+      };
+
+      await service
+        .updatePassword('bb597c87-2cf6-47fd-9f1c-5e99a6bae93d', input)
+        .catch((error) => {
+          expect(error).toBeInstanceOf(NotFoundException);
+          expect(error.response).toMatchObject({
+            code: 101,
+            message: userErrors[101],
+          });
+        });
+    });
+
+    it('should return error, because current_password === new_password', async () => {
+      mock.user.findUnique.mockReturnValue(user);
+
+      const input: UpdateUserPasswordDto = {
+        current_password: '123456',
+        new_password: '123456',
+        confirm_new_password: '654321',
+      };
+
+      await service
+        .updatePassword('0adc9fe5-497e-4376-be4e-d7482b91bf03', input)
+        .catch((error) => {
+          expect(error).toBeInstanceOf(BadRequestException);
+          expect(error.response).toMatchObject({
+            code: 102,
+            message: userErrors[102],
+          });
+        });
+    });
+
+    it('should return error, because new_password !== confirm_new_password', async () => {
+      mock.user.findUnique.mockReturnValue(user);
+
+      const input: UpdateUserPasswordDto = {
+        current_password: '123456',
+        new_password: '654321',
+        confirm_new_password: '987654',
+      };
+
+      await service
+        .updatePassword('0adc9fe5-497e-4376-be4e-d7482b91bf03', input)
+        .catch((error) => {
+          expect(error).toBeInstanceOf(BadRequestException);
+          expect(error.response).toMatchObject({
+            code: 103,
+            message: userErrors[103],
+          });
+        });
+    });
+
+    it('should return error, input.current_password !== user.password', async () => {
+      mock.user.findUnique.mockReturnValue(user);
+
+      const input: UpdateUserPasswordDto = {
+        current_password: '987654',
+        new_password: '654321',
+        confirm_new_password: '654321',
+      };
+
+      await service
+        .updatePassword('0adc9fe5-497e-4376-be4e-d7482b91bf03', input)
+        .catch((error) => {
+          expect(error).toBeInstanceOf(BadRequestException);
+          expect(error.response).toMatchObject({
+            code: 104,
+            message: userErrors[104],
           });
         });
     });
