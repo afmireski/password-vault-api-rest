@@ -3,12 +3,11 @@ import {
   ConflictException,
   Injectable,
 } from '@nestjs/common';
-import { User, Prisma } from '@prisma/client';
-import { PrismaService } from 'src/prisma/prisma.service';
+import { Prisma, User } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 import { userErrors } from 'src/error-codes/100-user-errors';
+import { PrismaService } from 'src/prisma/prisma.service';
 import { UpdateUserPasswordDto } from './dtos/input/update-user-password.dto';
-import { LoginDto } from './dtos/input/login.dto';
 
 @Injectable()
 export class UsersService {
