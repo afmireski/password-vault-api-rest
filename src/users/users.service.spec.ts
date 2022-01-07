@@ -192,4 +192,31 @@ describe('UsersService', () => {
       });
     });
   });
+
+  describe('delete', () => {
+    it('should delete the user', async () => {
+      mock.user.findUnique.mockReturnValue(user);
+      mock.user.delete.mockReturnValue(undefined);
+
+      const response = await service.delete(
+        '0adc9fe5-497e-4376-be4e-d7482b91bf03',
+      );
+
+      expect(response).toBeUndefined;
+    });
+
+    it("should return a error, because the user doesn't exists", async () => {
+      mock.user.findUnique.mockReturnValue(null);
+
+      await service
+        .delete('bb597c87-2cf6-47fd-9f1c-5e99a6bae93d')
+        .catch((error) => {
+          expect(error).toBeInstanceOf(NotFoundException);
+          expect(error.response).toMatchObject({
+            code: 101,
+            message: userErrors[101],
+          });
+        });
+    });
+  });
 });
