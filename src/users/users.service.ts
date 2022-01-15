@@ -2,34 +2,42 @@ import {
   BadRequestException,
   ConflictException,
   Injectable,
+  NotFoundException,
 } from '@nestjs/common';
-import { User, Prisma } from '@prisma/client';
-import { PrismaService } from 'src/prisma/prisma.service';
+import { Prisma, User } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
-import { userErrors } from 'src/error-codes/100-user-errors';
+import { userErrors } from '../error-codes/100-user-errors';
+import { ErrorCodeDto } from '../error-codes/error-code.dto';
+import { PrismaService } from '../prisma/prisma.service';
 import { UpdateUserPasswordDto } from './dtos/input/update-user-password.dto';
-import { LoginDto } from './dtos/input/login.dto';
 
 @Injectable()
 export class UsersService {
   constructor(private readonly prisma: PrismaService) {}
 
   async findUnique(where: Prisma.UserWhereUniqueInput): Promise<User> {
-    return await this.prisma.user.findUnique({
+    const user = await this.prisma.user.findUnique({
       where: where,
     });
+
+    if (!user) {
+      throw new NotFoundException(new ErrorCodeDto(101, userErrors[101]));
+    }
+
+    return user;
   }
 
   async create(input: Prisma.UserCreateInput): Promise<User> {
     return await Promise.resolve()
       .then(async () => {
-        const user = await this.findUnique({ email: input.email });
+        const user = await this.prisma.user.findFirst({
+          where: {
+            email: input.email,
+          },
+        });
 
         if (user) {
-          throw new ConflictException({
-            code: 100,
-            message: userErrors[100],
-          });
+          throw new ConflictException(new ErrorCodeDto(108, userErrors[108]));
         }
       })
       .then(() => {
@@ -53,26 +61,17 @@ export class UsersService {
   }
 
   async update(input: Prisma.UserUncheckedUpdateInput): Promise<User> {
-    return await Promise.resolve()
-      .then(async () => {
-        const user = await this.findUnique({ id: input.id as string });
-
-        if (!user) {
-          throw new BadRequestException({
-            code: 101,
-            message: userErrors[101],
-          });
-        }
-      })
+    return await Promise.resolve(this.findUnique({ id: input.id as string }))
       .then(async () => {
         if (input.email) {
-          const user = await this.findUnique({ email: input.email as string });
+          const user = await this.prisma.user.findFirst({
+            where: {
+              email: input.email as string,
+            },
+          });
 
           if (user) {
-            throw new BadRequestException({
-              code: 100,
-              message: userErrors[100],
-            });
+            throw new ConflictException(new ErrorCodeDto(108, userErrors[108]));
           }
         }
       })
@@ -82,8 +81,7 @@ export class UsersService {
             id: input.id as string,
           },
           data: {
-            name: input.name,
-            email: input.email,
+            ...input,
             updated_at: new Date(),
           },
         }),
@@ -102,19 +100,12 @@ export class UsersService {
 
   async delete(id: string) {
     return Promise.resolve(this.findUnique({ id: id }))
-      .then((user) => {
-        if (!user) {
-          throw new BadRequestException({
-            code: 101,
-            message: userErrors[101],
-          });
-        }
-
-        return this.prisma.user.delete({
+      .then(() =>
+        this.prisma.user.delete({
           where: { id: id },
           select: null,
-        });
-      })
+        }),
+      )
       .then(() => undefined)
       .catch((error) => {
         throw error;
@@ -124,27 +115,12 @@ export class UsersService {
   async updatePassword(id: string, input: UpdateUserPasswordDto) {
     return Promise.resolve(this.findUnique({ id: id }))
       .then((user) => {
-        if (!user) {
-          throw new BadRequestException({
-            code: 101,
-            message: userErrors[101],
-          });
-        }
         if (input.current_password === input.new_password) {
-          throw new BadRequestException({
-            code: 102,
-            message: userErrors[102],
-          });
+          throw new BadRequestException(new ErrorCodeDto(102, userErrors[102]));
         } else if (input.new_password !== input.confirm_new_password) {
-          throw new BadRequestException({
-            code: 103,
-            message: userErrors[103],
-          });
+          throw new BadRequestException(new ErrorCodeDto(103, userErrors[103]));
         } else if (!bcrypt.compareSync(input.current_password, user.password)) {
-          throw new BadRequestException({
-            code: 104,
-            message: userErrors[104],
-          });
+          throw new BadRequestException(new ErrorCodeDto(104, userErrors[104]));
         }
 
         return this.prisma.user.update({
