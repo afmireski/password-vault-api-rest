@@ -23,11 +23,11 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { User } from '@prisma/client';
-import { IsUserGuard } from 'src/auth/guards/is-user.guard';
-import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
-import { userErrors } from 'src/error-codes/100-user-errors';
-import { IsEmailValidator } from 'src/validators/isEmail-validator';
-import { IsUuid } from 'src/validators/isUuid-validator';
+import { IsUserGuard } from '../auth/guards/is-user.guard';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { userErrors } from '../error-codes/100-user-errors';
+import { IsEmailValidator } from '../validators/isEmail-validator';
+import { IsUuid } from '../validators/isUuid-validator';
 import { CreateUserDto } from './dtos/input/create-user.dto';
 import { UpdateUserPasswordDto } from './dtos/input/update-user-password.dto';
 import { UpdateUserDto } from './dtos/input/update-user.dto';
