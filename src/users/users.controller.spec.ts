@@ -18,7 +18,6 @@ import { UpdateUserPasswordDto } from './dtos/input/update-user-password.dto';
 
 describe('UsersController', () => {
   let controller: UsersController;
-  let service: UsersService;
 
   const mock = {
     user: {
@@ -64,7 +63,6 @@ describe('UsersController', () => {
     mock.user.updatePassword.mockReset;
 
     controller = module.get<UsersController>(UsersController);
-    service = module.get<UsersService>(UsersService);
   });
 
   it('should be defined', () => {
